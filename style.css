@@ -59,7 +59,6 @@ body.dark-mode .add-note-btn span {
     z-index: 10;
     background: transparent;
     transition: background-color 0.3s ease;
-    animation: lamp-breathe 3s ease-in-out infinite;
 }
 
 .lamp-hotspot.disabled {
@@ -69,15 +68,6 @@ body.dark-mode .add-note-btn span {
 .lamp-hotspot:hover {
     background-color: rgba(100, 100, 100, 0.25);
     animation: lamp-ripple 1.5s ease-out infinite;
-}
-
-@keyframes lamp-breathe {
-    0%, 100% {
-        box-shadow: 0 0 10px rgba(255, 220, 150, 0.3);
-    }
-    50% {
-        box-shadow: 0 0 20px rgba(255, 220, 150, 0.5);
-    }
 }
 
 @keyframes lamp-ripple {
