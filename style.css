@@ -1,0 +1,704 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans', sans-serif;
+    margin: 0;
+    background-color: white;
+    background-image: url('background image_light mode.png');
+    background-position: 50px center;
+    background-repeat: no-repeat;
+    background-size: auto 80%;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    transition: background-color 0.6s ease, background-image 0.6s ease;
+}
+
+/* Dark Mode */
+body.dark-mode {
+    background-color: #1a1a1a;
+    background-image: url('background image_dark mode.png');
+}
+
+body.dark-mode .cat-decoration,
+body.dark-mode .plant-decoration {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5))
+            drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    transition: filter 0.6s ease;
+}
+
+body.dark-mode .plant-decoration {
+    content: url('Flower Grow Sticker.gif');
+    left: 5px;
+    width: 120px;
+}
+
+body.dark-mode .add-note-btn {
+    background: white;
+    transition: background 0.6s ease;
+}
+
+body.dark-mode .add-note-btn span {
+    color: black;
+    transition: color 0.6s ease;
+}
+
+/* Lamp Hotspot */
+.lamp-hotspot {
+    position: fixed;
+    left: 180px;
+    top: 40px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    background: transparent;
+    transition: background-color 0.3s ease;
+}
+
+.lamp-hotspot.disabled {
+    pointer-events: none;
+}
+
+.lamp-hotspot:hover {
+    background-color: rgba(100, 100, 100, 0.25);
+    animation: lamp-ripple 1.5s ease-out infinite;
+}
+
+@keyframes lamp-ripple {
+    0% {
+        box-shadow: 0 0 0 0 rgba(100, 100, 100, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 15px rgba(100, 100, 100, 0.2);
+    }
+    100% {
+        box-shadow: 0 0 0 30px rgba(100, 100, 100, 0);
+    }
+}
+
+/* Pixel Box */
+.pixel-box {
+    position: fixed;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 401px;
+    height: 401px;
+    background: rgba(250, 250, 250, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(200, 200, 200, 0.8);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    grid-template-rows: repeat(10, 40px);
+    gap: 0;
+    z-index: 5;
+    padding: 0;
+    overflow: hidden;
+}
+
+.pixel-cell {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    z-index: 2;
+    border-right: 1px solid rgba(180, 180, 180, 0.5);
+    border-bottom: 1px solid rgba(180, 180, 180, 0.5);
+    box-sizing: border-box;
+}
+
+.pixel-cell:nth-child(10n) {
+    border-right: none;
+}
+
+.pixel-cell:nth-child(n + 91) {
+    border-bottom: none;
+}
+
+.pixel-cell:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: scale(1.1);
+}
+
+.scene {
+    position: relative;
+    width: 100vw;
+    min-height: 100vh;
+    z-index: 1;
+}
+
+/* Cat and Plant Decorations */
+.cat-decoration {
+    position: fixed;
+    bottom: 145px;
+    left: 350px;
+    width: 200px;
+    height: auto;
+    z-index: 2;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: transform 0.3s ease, filter 0.6s ease;
+}
+
+.cat-decoration:hover {
+    animation: catWiggle 0.5s ease-in-out;
+}
+
+@keyframes catWiggle {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-3deg) scale(1.03);
+    }
+    50% {
+        transform: rotate(3deg) scale(1.05);
+    }
+    75% {
+        transform: rotate(-2deg) scale(1.03);
+    }
+}
+
+.plant-decoration {
+    position: fixed;
+    bottom: 140px;
+    left: 20px;
+    width: 140px;
+    height: auto;
+    z-index: 2;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: filter 0.5s ease;
+}
+
+.plant-decoration:hover {
+    filter: brightness(1.3) saturate(1.2);
+}
+
+.star-decoration {
+    position: fixed;
+    top: 0px;
+    left: 450px;
+    width: 160px;
+    height: auto;
+    z-index: 2;
+    pointer-events: none;
+    display: none;
+}
+
+body.dark-mode .star-decoration {
+    display: block;
+}
+
+/* Sticky Note */
+.sticky-note {
+    position: fixed;
+    bottom: 100px;
+    left: 40px;
+    transform: rotate(-2deg) scale(0.9) translateY(20px);
+    width: 250px;
+    background: white;
+    padding: 18px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    z-index: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sticky-note.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: rotate(-2deg) scale(1) translateY(0);
+}
+
+.sticky-note.display-mode {
+    transform: rotate(-2deg);
+}
+
+.sticky-note.crumpling {
+    animation: realCrumple 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes realCrumple {
+    0% {
+        transform: rotate(-2deg) scale(1, 1);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    15% {
+        transform: rotate(8deg) scale(0.95, 1.05);
+    }
+    30% {
+        transform: rotate(-12deg) scale(1.08, 0.88);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+    45% {
+        transform: rotate(15deg) scale(0.82, 1.12);
+    }
+    60% {
+        transform: rotate(-18deg) scale(1.15, 0.75);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+    75% {
+        transform: rotate(25deg) scale(0.65, 0.95);
+    }
+    85% {
+        transform: rotate(-10deg) scale(0.55, 0.85);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+    }
+    100% {
+        transform: rotate(5deg) scale(0.25, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        border-radius: 50%;
+    }
+}
+
+.sticky-note.throwing {
+    pointer-events: none;
+}
+
+/* Particle explosion */
+.particle {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+}
+
+@keyframes particleExplode {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--tx), var(--ty)) scale(0);
+    }
+}
+
+#noteInput {
+    width: 100%;
+    height: 120px;
+    border: 2px solid #e0e0e0;
+    background: white;
+    font-size: 20px;
+    font-family: 'Reenie Beanie', cursive;
+    resize: none;
+    outline: none;
+    color: #333;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+#noteInput::placeholder {
+    color: #999;
+}
+
+.drawing-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.drawing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.drawing-header label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #333;
+}
+
+.drawing-actions {
+    display: flex;
+    gap: 8px;
+}
+
+#drawingCanvas {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: crosshair;
+    background: white;
+    width: 100%;
+}
+
+.upload-image-btn,
+.clear-canvas-btn {
+    padding: 5px 10px;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 6px;
+    font-size: 10px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-family: 'Noto Sans', sans-serif;
+}
+
+.upload-image-btn:hover,
+.clear-canvas-btn:hover {
+    background: #e0e0e0;
+}
+
+.sticky-close-btn-edit {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 32px;
+    height: 32px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+.sticky-close-btn-edit:hover {
+    background: #000;
+    transform: scale(1.1);
+}
+
+.let-go-btn {
+    background: #ff6b6b;
+    color: white;
+    margin-top: 16px;
+}
+
+.let-go-btn:hover {
+    background: #ff5252;
+}
+
+#displayCanvas {
+    margin-bottom: 16px;
+    border-radius: 8px;
+}
+
+.create-btn {
+    width: 100%;
+    padding: 12px 24px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Noto Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.create-btn:hover {
+    background: #000;
+}
+
+.create-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Sticky Display Mode */
+.sticky-display-mode {
+    position: relative;
+}
+
+.sticky-note-text {
+    font-size: 22px;
+    font-family: 'Reenie Beanie', cursive;
+    color: #333;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    min-height: 120px;
+    margin: 0;
+}
+
+.sticky-close-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 32px;
+    height: 32px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.sticky-close-btn:hover {
+    background: #000;
+    transform: scale(1.1);
+}
+
+/* Add Note Button */
+.add-note-btn {
+    position: fixed;
+    bottom: 40px;
+    left: 40px;
+    width: 50px;
+    height: 50px;
+    background: #080808;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.6s ease;
+    z-index: 100;
+}
+
+.add-note-btn:hover {
+    transform: scale(1.15) rotate(90deg);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.add-note-btn span {
+    font-size: 32px;
+    color: white;
+    font-weight: normal;
+    transition: color 0.6s ease;
+}
+
+/* Flower Garden */
+.flower-garden {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 5;
+    display: none;
+}
+
+.flower {
+    position: absolute;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: transform 0.2s ease;
+    width: 50px;
+    height: 50px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.flower:hover {
+    transform: scale(1.1);
+}
+
+.flower img {
+    width: 60px;
+    height: 60px;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.15));
+}
+
+/* Note Popover */
+.note-modal {
+    position: fixed;
+    right: 460px;
+    top: 50%;
+    transform: translateY(-50%) scale(0.95);
+    width: 240px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    padding: 16px;
+}
+
+.note-modal.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(-50%) scale(1);
+}
+
+.modal-content {
+    position: relative;
+}
+
+.modal-content .sticky-close-btn-edit {
+    position: absolute;
+    top: -34px;
+    right: -34px;
+}
+
+.modal-date {
+    font-size: 12px;
+    color: #999;
+    text-align: left;
+    margin-bottom: 12px;
+}
+
+.modal-note-text {
+    font-size: 22px;
+    line-height: 1.3;
+    color: #000;
+    font-family: 'Reenie Beanie', cursive;
+    margin-bottom: 8px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.modal-flower {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.modal-flower canvas {
+    width: 180px;
+    height: 180px;
+    border-radius: 8px;
+}
+
+/* Inspirational Quote Tooltip */
+.quote-tooltip {
+    position: fixed;
+    bottom: 325px;
+    left: 340px;
+    background: #080808;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Reenie Beanie', cursive;
+    font-size: 18px;
+    color: white;
+    max-width: 220px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.6s ease, color 0.6s ease;
+    z-index: 1000;
+    line-height: 1.15;
+}
+
+.quote-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.quote-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #080808;
+    transition: border-top-color 0.6s ease;
+}
+
+body.dark-mode .quote-tooltip {
+    background: white;
+    color: #080808;
+    transition: background 0.6s ease, color 0.6s ease;
+}
+
+body.dark-mode .quote-tooltip::after {
+    border-top-color: white;
+    transition: border-top-color 0.6s ease;
+}
+
+/* Click Effects */
+.click-effect {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* Flower Bloom */
+.flower-bloom {
+    animation: bloomFade 1.2s ease-out forwards;
+}
+
+@keyframes bloomFade {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.2);
+        opacity: 0;
+    }
+}
+
+/* Flower Trail */
+.flower-trail {
+    animation: trailFade 0.8s ease-out forwards;
+}
+
+@keyframes trailFade {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.6;
+    }
+    100% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+}
+
+/* Flower Trail */
+.flower-trail {
+    animation: trailFade 0.8s ease-out forwards;
+}
+
+@keyframes trailFade {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.6;
+    }
+    100% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+}
