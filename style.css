@@ -145,13 +145,13 @@ body.dark-mode .add-note-btn span {
 .cat-decoration {
     position: fixed;
     bottom: 210px;
-    left: 440px;
+    left: 460px;
     width: 160px;
     height: auto;
     z-index: 2;
-    pointer-events: auto;
     cursor: pointer;
     transition: transform 0.3s ease, filter 0.6s ease;
+    pointer-events: auto;
 }
 
 .cat-decoration:hover {
