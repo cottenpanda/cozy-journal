@@ -385,6 +385,12 @@ class CozyJournal {
 
     showStickyNote() {
         this.playSound('click');
+
+        // Reset any animation styles first
+        this.elements.stickyNote.style.transition = '';
+        this.elements.stickyNote.style.transform = '';
+        this.elements.stickyNote.style.opacity = '';
+
         this.elements.stickyNote.classList.add('visible');
         this.elements.stickyNote.classList.remove('display-mode');
 
