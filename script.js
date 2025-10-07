@@ -636,10 +636,10 @@ class CozyJournal {
                 if (isCanvas) {
                     // Canvas drawing (hand-drawn or uploaded) - higher resolution
                     const miniCanvas = document.createElement('canvas');
-                    miniCanvas.width = 672;
-                    miniCanvas.height = 672;
-                    miniCanvas.style.width = '42px';
-                    miniCanvas.style.height = '42px';
+                    miniCanvas.width = 768;
+                    miniCanvas.height = 768;
+                    miniCanvas.style.width = '48px';
+                    miniCanvas.style.height = '48px';
                     miniCanvas.style.display = 'block';
                     miniCanvas.style.margin = 'auto';
                     const miniCtx = miniCanvas.getContext('2d');
@@ -650,9 +650,9 @@ class CozyJournal {
                         miniCtx.imageSmoothingQuality = 'high';
 
                         // Scale to fit the entire image while maintaining aspect ratio
-                        const scale = Math.min(672 / img.width, 672 / img.height);
-                        const x = (672 - img.width * scale) / 2;
-                        const y = (672 - img.height * scale) / 2;
+                        const scale = Math.min(768 / img.width, 768 / img.height);
+                        const x = (768 - img.width * scale) / 2;
+                        const y = (768 - img.height * scale) / 2;
 
                         // Draw image centered without cropping
                         miniCtx.drawImage(img, x, y, img.width * scale, img.height * scale);
