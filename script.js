@@ -41,6 +41,8 @@ class CozyJournal {
             uploadImageBtn: document.getElementById('uploadImageBtn'),
             imageUpload: document.getElementById('imageUpload'),
             displayCanvas: document.getElementById('displayCanvas'),
+            displayAudio: document.getElementById('displayAudio'),
+            displayVideo: document.getElementById('displayVideo'),
             letGoBtn: document.getElementById('letGoBtn'),
             modalCanvas: document.getElementById('modalCanvas'),
             modalLetGoBtn: document.getElementById('modalLetGoBtn'),
@@ -392,7 +394,7 @@ class CozyJournal {
             } else if (file.type.startsWith('audio/')) {
                 this.currentMediaType = 'audio';
                 this.clearCanvas();
-                this.ctx.font = '48px "Noto Sans"';
+                this.ctx.font = '80px "Noto Sans"';
                 this.ctx.fillStyle = '#080808';
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
@@ -400,7 +402,7 @@ class CozyJournal {
             } else if (file.type.startsWith('video/')) {
                 this.currentMediaType = 'video';
                 this.clearCanvas();
-                this.ctx.font = '48px "Noto Sans"';
+                this.ctx.font = '80px "Noto Sans"';
                 this.ctx.fillStyle = '#080808';
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
@@ -571,13 +573,23 @@ class CozyJournal {
                         miniCtx.imageSmoothingEnabled = true;
                         miniCtx.imageSmoothingQuality = 'high';
 
-                        // Calculate scaling to fit image while maintaining aspect ratio
-                        const scale = Math.min(320 / img.width, 320 / img.height);
-                        const x = (320 - img.width * scale) / 2;
-                        const y = (320 - img.height * scale) / 2;
+                        // Check if it's an emoji icon (contains 🎵 or 🎬)
+                        // For emoji icons, draw larger
+                        if (img.height === 360 && img.width === 600) {
+                            // This is from the drawing canvas - check if it's mostly empty with emoji
+                            const scale = Math.min(320 / img.width, 320 / img.height);
+                            const x = (320 - img.width * scale) / 2;
+                            const y = (320 - img.height * scale) / 2;
+                            miniCtx.drawImage(img, x, y, img.width * scale, img.height * scale);
+                        } else {
+                            // Calculate scaling to fit image while maintaining aspect ratio
+                            const scale = Math.min(320 / img.width, 320 / img.height);
+                            const x = (320 - img.width * scale) / 2;
+                            const y = (320 - img.height * scale) / 2;
 
-                        // Draw image centered without stretching
-                        miniCtx.drawImage(img, x, y, img.width * scale, img.height * scale);
+                            // Draw image centered without stretching
+                            miniCtx.drawImage(img, x, y, img.width * scale, img.height * scale);
+                        }
                     };
                     img.src = drawingData;
 
