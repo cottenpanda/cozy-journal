@@ -8,7 +8,7 @@ body {
     font-family: 'Noto Sans', sans-serif;
     margin: 0;
     background-color: white;
-    background-image: url('background image_light mode.png');
+    background-image: url('background-light.png');
     background-position: 50px center;
     background-repeat: no-repeat;
     background-size: auto 80%;
@@ -21,7 +21,7 @@ body {
 /* Dark Mode */
 body.dark-mode {
     background-color: #1a1a1a;
-    background-image: url('background image_dark mode.png');
+    background-image: url('background-dark.png');
 }
 
 body.dark-mode .cat-decoration,
@@ -32,7 +32,7 @@ body.dark-mode .plant-decoration {
 }
 
 body.dark-mode .plant-decoration {
-    content: url('Flower Grow Sticker.gif');
+    content: url('flower.gif');
     left: 5px;
     width: 120px;
 }
