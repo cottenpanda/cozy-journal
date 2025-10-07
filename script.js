@@ -423,12 +423,12 @@ class CozyJournal {
         // Play pop sound when creating note
         this.playSound('pop');
 
-        // Save note and add to pixel box
+        // Save note and add to pixel box with animation
         this.saveNote(noteText, finalDrawing);
-        this.addDrawingToPixelBox(finalDrawing, hasDrawing);
+        this.addDrawingToPixelBoxWithAnimation(finalDrawing, hasDrawing);
 
-        // Close sticky note
-        this.closeStickyDisplay();
+        // Close sticky note after animation starts
+        setTimeout(() => this.closeStickyDisplay(), 300);
     }
 
     getRandomEmojiPath() {
@@ -520,11 +520,87 @@ class CozyJournal {
         this.elements.lampHotspot.classList.remove('disabled');
     }
 
-    addDrawingToPixelBox(drawingData, isCanvas = true) {
+    addDrawingToPixelBoxWithAnimation(drawingData, isCanvas = true) {
         // Find first empty cell
         const cells = this.elements.pixelBox.querySelectorAll('.pixel-cell');
+        let targetCell = null;
         for (let cell of cells) {
             if (!cell.querySelector('canvas') && !cell.querySelector('img')) {
+                targetCell = cell;
+                break;
+            }
+        }
+
+        if (!targetCell) return;
+
+        // Create flying emoji animation
+        const flyingEmoji = document.createElement('div');
+        flyingEmoji.style.position = 'fixed';
+        flyingEmoji.style.zIndex = '10000';
+        flyingEmoji.style.pointerEvents = 'none';
+        flyingEmoji.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+
+        // Create mini preview of the emoji
+        const previewCanvas = document.createElement('canvas');
+        previewCanvas.width = 80;
+        previewCanvas.height = 80;
+        previewCanvas.style.width = '80px';
+        previewCanvas.style.height = '80px';
+        const previewCtx = previewCanvas.getContext('2d');
+
+        const img = new Image();
+        img.onload = () => {
+            previewCtx.imageSmoothingEnabled = true;
+            previewCtx.imageSmoothingQuality = 'high';
+            const scale = Math.max(80 / img.width, 80 / img.height);
+            const x = (80 - img.width * scale) / 2;
+            const y = (80 - img.height * scale) / 2;
+            previewCtx.drawImage(img, x, y, img.width * scale, img.height * scale);
+        };
+        img.src = drawingData;
+
+        flyingEmoji.appendChild(previewCanvas);
+
+        // Position at sticky note location
+        const stickyRect = this.elements.stickyNote.getBoundingClientRect();
+        flyingEmoji.style.left = stickyRect.left + 'px';
+        flyingEmoji.style.top = stickyRect.top + 'px';
+        flyingEmoji.style.opacity = '1';
+        flyingEmoji.style.transform = 'scale(0.5)';
+
+        document.body.appendChild(flyingEmoji);
+
+        // Animate to pixel box cell
+        const targetRect = targetCell.getBoundingClientRect();
+        setTimeout(() => {
+            flyingEmoji.style.left = targetRect.left + 'px';
+            flyingEmoji.style.top = targetRect.top + 'px';
+            flyingEmoji.style.transform = 'scale(0.5) rotate(360deg)';
+            flyingEmoji.style.opacity = '1';
+        }, 50);
+
+        // Add to pixel box after animation
+        setTimeout(() => {
+            flyingEmoji.remove();
+            this.addDrawingToPixelBox(drawingData, isCanvas, targetCell);
+        }, 650);
+    }
+
+    addDrawingToPixelBox(drawingData, isCanvas = true, targetCell = null) {
+        // Use provided target cell or find first empty cell
+        const cells = this.elements.pixelBox.querySelectorAll('.pixel-cell');
+        let cell = targetCell;
+
+        if (!cell) {
+            for (let c of cells) {
+                if (!c.querySelector('canvas') && !c.querySelector('img')) {
+                    cell = c;
+                    break;
+                }
+            }
+        }
+
+        if (cell && (!cell.querySelector('canvas') && !cell.querySelector('img'))) {
                 if (isCanvas) {
                     // Canvas drawing (hand-drawn or uploaded) - higher resolution
                     const miniCanvas = document.createElement('canvas');
@@ -573,9 +649,7 @@ class CozyJournal {
                 }
 
                 cell.dataset.noteId = this.notes[this.notes.length - 1]?.id || Date.now();
-                break;
             }
-        }
     }
 
     letGoNote() {
