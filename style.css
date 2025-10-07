@@ -50,8 +50,8 @@ body.dark-mode .add-note-btn span {
 /* Lamp Hotspot */
 .lamp-hotspot {
     position: fixed;
-    left: 180px;
-    top: 40px;
+    left: 200px;
+    top: 55px;
     width: 150px;
     height: 150px;
     border-radius: 50%;
@@ -144,8 +144,8 @@ body.dark-mode .add-note-btn span {
 /* Cat and Plant Decorations */
 .cat-decoration {
     position: fixed;
-    bottom: 145px;
-    left: 350px;
+    bottom: 175px;
+    left: 380px;
     width: 200px;
     height: auto;
     z-index: 2;
@@ -175,7 +175,7 @@ body.dark-mode .add-note-btn span {
 
 .plant-decoration {
     position: fixed;
-    bottom: 140px;
+    bottom: 180px;
     left: 20px;
     width: 140px;
     height: auto;
@@ -596,8 +596,8 @@ body.dark-mode .star-decoration {
 /* Inspirational Quote Tooltip */
 .quote-tooltip {
     position: fixed;
-    bottom: 325px;
-    left: 340px;
+    bottom: 355px;
+    left: 370px;
     background: #080808;
     padding: 8px 12px;
     border-radius: 8px;
