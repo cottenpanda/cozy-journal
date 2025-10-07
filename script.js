@@ -526,10 +526,10 @@ class CozyJournal {
         for (let cell of cells) {
             if (!cell.querySelector('canvas') && !cell.querySelector('img')) {
                 if (isCanvas) {
-                    // Canvas drawing (hand-drawn or uploaded) - 8x resolution
+                    // Canvas drawing (hand-drawn or uploaded) - higher resolution
                     const miniCanvas = document.createElement('canvas');
-                    miniCanvas.width = 320;
-                    miniCanvas.height = 320;
+                    miniCanvas.width = 480;
+                    miniCanvas.height = 480;
                     miniCanvas.style.width = '40px';
                     miniCanvas.style.height = '40px';
                     miniCanvas.style.display = 'block';
@@ -540,23 +540,13 @@ class CozyJournal {
                         miniCtx.imageSmoothingEnabled = true;
                         miniCtx.imageSmoothingQuality = 'high';
 
-                        // Check if it's an emoji icon (contains 🎵 or 🎬)
-                        // For emoji icons, draw larger
-                        if (img.height === 360 && img.width === 600) {
-                            // This is from the drawing canvas - check if it's mostly empty with emoji
-                            const scale = Math.min(320 / img.width, 320 / img.height);
-                            const x = (320 - img.width * scale) / 2;
-                            const y = (320 - img.height * scale) / 2;
-                            miniCtx.drawImage(img, x, y, img.width * scale, img.height * scale);
-                        } else {
-                            // Calculate scaling to fit image while maintaining aspect ratio
-                            const scale = Math.min(320 / img.width, 320 / img.height);
-                            const x = (320 - img.width * scale) / 2;
-                            const y = (320 - img.height * scale) / 2;
+                        // Calculate scaling to fit image while maintaining aspect ratio
+                        const scale = Math.min(480 / img.width, 480 / img.height);
+                        const x = (480 - img.width * scale) / 2;
+                        const y = (480 - img.height * scale) / 2;
 
-                            // Draw image centered without stretching
-                            miniCtx.drawImage(img, x, y, img.width * scale, img.height * scale);
-                        }
+                        // Draw image centered without stretching
+                        miniCtx.drawImage(img, x, y, img.width * scale, img.height * scale);
                     };
                     img.src = drawingData;
 
