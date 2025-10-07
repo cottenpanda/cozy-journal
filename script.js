@@ -425,10 +425,20 @@ class CozyJournal {
 
         // Save note and add to pixel box with animation
         this.saveNote(noteText, finalDrawing);
+
+        // Shrink sticky note immediately
+        this.elements.stickyNote.style.transition = 'all 0.6s ease-out';
+        this.elements.stickyNote.style.transform = 'scale(0.3) rotate(-5deg)';
+        this.elements.stickyNote.style.opacity = '0';
+
         this.addDrawingToPixelBoxWithAnimation(finalDrawing, hasDrawing);
 
-        // Close sticky note after animation starts
-        setTimeout(() => this.closeStickyDisplay(), 300);
+        // Close sticky note after animation
+        setTimeout(() => {
+            this.closeStickyDisplay();
+            this.elements.stickyNote.style.transform = 'rotate(-2deg) scale(0.9) translateY(20px)';
+            this.elements.stickyNote.style.opacity = '0';
+        }, 600);
     }
 
     getRandomEmojiPath() {
@@ -538,7 +548,7 @@ class CozyJournal {
         flyingEmoji.style.position = 'fixed';
         flyingEmoji.style.zIndex = '10000';
         flyingEmoji.style.pointerEvents = 'none';
-        flyingEmoji.style.transition = 'all 1s cubic-bezier(0.4, 0.0, 0.2, 1)';
+        flyingEmoji.style.transition = 'all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
 
         // Create mini preview of the emoji
         const previewCanvas = document.createElement('canvas');
@@ -575,25 +585,25 @@ class CozyJournal {
 
         document.body.appendChild(flyingEmoji);
 
-        // Animate to pixel box cell with shrinking
+        // Animate to pixel box cell immediately (no delay)
         const targetRect = targetCell.getBoundingClientRect();
         const targetCenter = {
             x: targetRect.left + targetRect.width / 2,
             y: targetRect.top + targetRect.height / 2
         };
 
-        setTimeout(() => {
+        requestAnimationFrame(() => {
             flyingEmoji.style.left = (targetCenter.x - 20) + 'px';
             flyingEmoji.style.top = (targetCenter.y - 20) + 'px';
             flyingEmoji.style.transform = 'scale(0.5)';
             flyingEmoji.style.opacity = '1';
-        }, 50);
+        });
 
         // Add to pixel box after animation
         setTimeout(() => {
             flyingEmoji.remove();
             this.addDrawingToPixelBox(drawingData, isCanvas, targetCell);
-        }, 1050);
+        }, 700);
     }
 
     addDrawingToPixelBox(drawingData, isCanvas = true, targetCell = null) {
