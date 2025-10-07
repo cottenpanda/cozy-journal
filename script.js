@@ -540,12 +540,12 @@ class CozyJournal {
                         miniCtx.imageSmoothingEnabled = true;
                         miniCtx.imageSmoothingQuality = 'high';
 
-                        // Calculate scaling to fit image while maintaining aspect ratio
-                        const scale = Math.min(480 / img.width, 480 / img.height);
+                        // For uploaded images, scale to fill the canvas while maintaining aspect ratio
+                        const scale = Math.max(480 / img.width, 480 / img.height);
                         const x = (480 - img.width * scale) / 2;
                         const y = (480 - img.height * scale) / 2;
 
-                        // Draw image centered without stretching
+                        // Draw image centered, filling the canvas
                         miniCtx.drawImage(img, x, y, img.width * scale, img.height * scale);
                     };
                     img.src = drawingData;
