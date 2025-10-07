@@ -609,6 +609,7 @@ class CozyJournal {
                     miniCanvas.style.width = '40px';
                     miniCanvas.style.height = '40px';
                     miniCanvas.style.display = 'block';
+                    miniCanvas.style.margin = 'auto';
                     const miniCtx = miniCanvas.getContext('2d');
 
                     const img = new Image();
@@ -635,6 +636,7 @@ class CozyJournal {
                     svgCanvas.style.width = '30px';
                     svgCanvas.style.height = '30px';
                     svgCanvas.style.display = 'block';
+                    svgCanvas.style.margin = 'auto';
                     const svgCtx = svgCanvas.getContext('2d');
 
                     const img = new Image();
