@@ -149,9 +149,21 @@ body.dark-mode .add-note-btn span {
     width: 200px;
     height: auto;
     z-index: 2;
-    pointer-events: auto;
+    pointer-events: none;
     cursor: pointer;
     transition: transform 0.3s ease, filter 0.6s ease;
+}
+
+.cat-decoration::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height: 60%;
+    cursor: pointer;
+    pointer-events: auto;
 }
 
 .cat-decoration:hover {
