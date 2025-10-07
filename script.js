@@ -46,7 +46,9 @@ class CozyJournal {
             modalLetGoBtn: document.getElementById('modalLetGoBtn'),
             catDecoration: document.getElementById('catDecoration'),
             quoteTooltip: document.getElementById('quoteTooltip'),
-            lampHotspot: document.getElementById('lampHotspot')
+            lampHotspot: document.getElementById('lampHotspot'),
+            modalAudio: document.getElementById('modalAudio'),
+            modalVideo: document.getElementById('modalVideo')
         };
 
         // Dark mode state
@@ -75,6 +77,8 @@ class CozyJournal {
 
         this.isDrawing = false;
         this.currentDrawing = null;
+        this.currentMedia = null; // Store media file data
+        this.currentMediaType = null; // 'image', 'audio', or 'video'
         this.isOverPlant = false;
         this.lastTrailTime = 0;
         this.trailDelay = 100; // milliseconds between trail flowers
@@ -333,13 +337,15 @@ class CozyJournal {
 
     clearCanvas() {
         this.ctx.clearRect(0, 0, this.elements.drawingCanvas.width, this.elements.drawingCanvas.height);
+        this.currentMedia = null;
+        this.currentMediaType = null;
     }
 
     handleImageUpload(e) {
         const file = e.target.files[0];
         if (!file) return;
 
-        this.loadImageToCanvas(file);
+        this.loadMediaToCanvas(file);
 
         // Reset file input
         e.target.value = '';
@@ -356,29 +362,50 @@ class CozyJournal {
         e.stopPropagation();
 
         const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith('image/')) {
-            this.loadImageToCanvas(file);
+        if (file) {
+            this.loadMediaToCanvas(file);
         }
     }
 
-    loadImageToCanvas(file) {
+    loadMediaToCanvas(file) {
         const reader = new FileReader();
         reader.onload = (event) => {
-            const img = new Image();
-            img.onload = () => {
-                // Clear canvas first
+            this.currentMedia = event.target.result;
+
+            if (file.type.startsWith('image/')) {
+                this.currentMediaType = 'image';
+                const img = new Image();
+                img.onload = () => {
+                    // Clear canvas first
+                    this.clearCanvas();
+
+                    // Calculate scaling to fit image in canvas while maintaining aspect ratio
+                    const canvas = this.elements.drawingCanvas;
+                    const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+                    const x = (canvas.width - img.width * scale) / 2;
+                    const y = (canvas.height - img.height * scale) / 2;
+
+                    // Draw image centered on canvas
+                    this.ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+                };
+                img.src = event.target.result;
+            } else if (file.type.startsWith('audio/')) {
+                this.currentMediaType = 'audio';
                 this.clearCanvas();
-
-                // Calculate scaling to fit image in canvas while maintaining aspect ratio
-                const canvas = this.elements.drawingCanvas;
-                const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
-                const x = (canvas.width - img.width * scale) / 2;
-                const y = (canvas.height - img.height * scale) / 2;
-
-                // Draw image centered on canvas
-                this.ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-            };
-            img.src = event.target.result;
+                this.ctx.font = '48px "Noto Sans"';
+                this.ctx.fillStyle = '#080808';
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText('🎵', this.elements.drawingCanvas.width / 2, this.elements.drawingCanvas.height / 2);
+            } else if (file.type.startsWith('video/')) {
+                this.currentMediaType = 'video';
+                this.clearCanvas();
+                this.ctx.font = '48px "Noto Sans"';
+                this.ctx.fillStyle = '#080808';
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.fillText('🎬', this.elements.drawingCanvas.width / 2, this.elements.drawingCanvas.height / 2);
+            }
         };
         reader.readAsDataURL(file);
     }
@@ -423,9 +450,13 @@ class CozyJournal {
         // Play pop sound when creating note
         this.playSound('pop');
 
-        // Save note and add to pixel box
-        this.saveNote(noteText, finalDrawing);
+        // Save note with media data
+        this.saveNote(noteText, finalDrawing, this.currentMedia, this.currentMediaType);
         this.addDrawingToPixelBox(finalDrawing, hasDrawing);
+
+        // Reset media
+        this.currentMedia = null;
+        this.currentMediaType = null;
 
         // Close sticky note
         this.closeStickyDisplay();
@@ -690,11 +721,13 @@ class CozyJournal {
         }
     }
 
-    saveNote(text, mood) {
+    saveNote(text, mood, media, mediaType) {
         const note = {
             id: Date.now(),
             text: text,
             mood: mood,
+            media: media || null,
+            mediaType: mediaType || null,
             date: new Date().toISOString()
         };
 
@@ -732,6 +765,23 @@ class CozyJournal {
             this.elements.modalNoteText.style.display = 'block';
         } else {
             this.elements.modalNoteText.style.display = 'none';
+        }
+
+        // Hide all media elements first
+        this.elements.modalCanvas.style.display = 'none';
+        this.elements.modalAudio.style.display = 'none';
+        this.elements.modalVideo.style.display = 'none';
+
+        // Display media if exists
+        if (note.media) {
+            if (note.mediaType === 'audio') {
+                this.elements.modalAudio.src = note.media;
+                this.elements.modalAudio.style.display = 'block';
+            } else if (note.mediaType === 'video') {
+                this.elements.modalVideo.src = note.media;
+                this.elements.modalVideo.style.display = 'block';
+            }
+            this.elements.modalFlower.style.display = 'flex';
         }
 
         // Display drawing if exists with higher resolution
@@ -780,7 +830,7 @@ class CozyJournal {
                 this.elements.modalCanvas.style.display = 'block';
             }
             this.elements.modalFlower.style.display = 'flex';
-        } else {
+        } else if (!note.media) {
             this.elements.modalFlower.style.display = 'none';
         }
 
