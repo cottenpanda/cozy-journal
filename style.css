@@ -144,8 +144,8 @@ body.dark-mode .add-note-btn span {
 /* Cat and Plant Decorations */
 .cat-decoration {
     position: fixed;
-    bottom: 195px;
-    left: 380px;
+    bottom: 210px;
+    left: 400px;
     width: 200px;
     height: auto;
     z-index: 2;
@@ -596,8 +596,8 @@ body.dark-mode .star-decoration {
 /* Inspirational Quote Tooltip */
 .quote-tooltip {
     position: fixed;
-    bottom: 375px;
-    left: 370px;
+    bottom: 390px;
+    left: 390px;
     background: #080808;
     padding: 8px 12px;
     border-radius: 8px;
