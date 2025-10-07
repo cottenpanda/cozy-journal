@@ -134,6 +134,14 @@ body.dark-mode .add-note-btn span {
     transform: scale(1.1);
 }
 
+.pixel-cell[draggable="true"] {
+    cursor: grab;
+}
+
+.pixel-cell[draggable="true"]:active {
+    cursor: grabbing;
+}
+
 .scene {
     position: relative;
     width: 100vw;

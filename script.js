@@ -78,6 +78,7 @@ class CozyJournal {
         this.isOverPlant = false;
         this.lastTrailTime = 0;
         this.trailDelay = 100; // milliseconds between trail flowers
+        this.draggedCell = null;
 
         this.init();
     }
@@ -635,10 +636,10 @@ class CozyJournal {
                 if (isCanvas) {
                     // Canvas drawing (hand-drawn or uploaded) - higher resolution
                     const miniCanvas = document.createElement('canvas');
-                    miniCanvas.width = 640;
-                    miniCanvas.height = 640;
-                    miniCanvas.style.width = '40px';
-                    miniCanvas.style.height = '40px';
+                    miniCanvas.width = 672;
+                    miniCanvas.height = 672;
+                    miniCanvas.style.width = '42px';
+                    miniCanvas.style.height = '42px';
                     miniCanvas.style.display = 'block';
                     miniCanvas.style.margin = 'auto';
                     const miniCtx = miniCanvas.getContext('2d');
@@ -649,9 +650,9 @@ class CozyJournal {
                         miniCtx.imageSmoothingQuality = 'high';
 
                         // Scale to fit the entire image while maintaining aspect ratio
-                        const scale = Math.min(640 / img.width, 640 / img.height);
-                        const x = (640 - img.width * scale) / 2;
-                        const y = (640 - img.height * scale) / 2;
+                        const scale = Math.min(672 / img.width, 672 / img.height);
+                        const x = (672 - img.width * scale) / 2;
+                        const y = (672 - img.height * scale) / 2;
 
                         // Draw image centered without cropping
                         miniCtx.drawImage(img, x, y, img.width * scale, img.height * scale);
@@ -662,10 +663,10 @@ class CozyJournal {
                 } else {
                     // SVG emoji (random) - render on high-res canvas
                     const svgCanvas = document.createElement('canvas');
-                    svgCanvas.width = 240;
-                    svgCanvas.height = 240;
-                    svgCanvas.style.width = '30px';
-                    svgCanvas.style.height = '30px';
+                    svgCanvas.width = 224;
+                    svgCanvas.height = 224;
+                    svgCanvas.style.width = '28px';
+                    svgCanvas.style.height = '28px';
                     svgCanvas.style.display = 'block';
                     svgCanvas.style.margin = 'auto';
                     const svgCtx = svgCanvas.getContext('2d');
@@ -674,7 +675,7 @@ class CozyJournal {
                     img.onload = () => {
                         svgCtx.imageSmoothingEnabled = true;
                         svgCtx.imageSmoothingQuality = 'high';
-                        svgCtx.drawImage(img, 0, 0, 240, 240);
+                        svgCtx.drawImage(img, 0, 0, 224, 224);
                     };
                     img.src = drawingData;
 
@@ -682,6 +683,7 @@ class CozyJournal {
                 }
 
                 cell.dataset.noteId = this.notes[this.notes.length - 1]?.id || Date.now();
+                cell.draggable = true;
             }
     }
 
@@ -786,8 +788,126 @@ class CozyJournal {
             const cell = document.createElement('div');
             cell.className = 'pixel-cell';
             cell.addEventListener('click', () => this.showPixelNote(cell));
+
+            // Add drag and drop events
+            cell.addEventListener('dragstart', (e) => this.handlePixelDragStart(e));
+            cell.addEventListener('dragover', (e) => this.handlePixelDragOver(e));
+            cell.addEventListener('drop', (e) => this.handlePixelDrop(e));
+            cell.addEventListener('dragend', (e) => this.handlePixelDragEnd(e));
+            cell.addEventListener('dragenter', (e) => this.handlePixelDragEnter(e));
+            cell.addEventListener('dragleave', (e) => this.handlePixelDragLeave(e));
+
             this.elements.pixelBox.appendChild(cell);
         }
+    }
+
+    handlePixelDragStart(e) {
+        const cell = e.target.closest('.pixel-cell');
+        if (!cell || !cell.dataset.noteId) {
+            e.preventDefault();
+            return;
+        }
+
+        this.draggedCell = cell;
+        cell.style.opacity = '0.5';
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', cell.innerHTML);
+    }
+
+    handlePixelDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    }
+
+    handlePixelDragEnter(e) {
+        const cell = e.target.closest('.pixel-cell');
+        if (cell && cell !== this.draggedCell) {
+            cell.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+        }
+    }
+
+    handlePixelDragLeave(e) {
+        const cell = e.target.closest('.pixel-cell');
+        if (cell && cell !== this.draggedCell) {
+            cell.style.backgroundColor = '';
+        }
+    }
+
+    handlePixelDrop(e) {
+        e.preventDefault();
+        const dropCell = e.target.closest('.pixel-cell');
+
+        if (!dropCell || !this.draggedCell || dropCell === this.draggedCell) {
+            return;
+        }
+
+        // Clone canvas elements properly
+        const cloneDraggedContent = () => {
+            const canvas = this.draggedCell.querySelector('canvas');
+            if (canvas) {
+                const newCanvas = canvas.cloneNode(true);
+                const newCtx = newCanvas.getContext('2d');
+                newCtx.drawImage(canvas, 0, 0);
+                return newCanvas;
+            }
+            return null;
+        };
+
+        const cloneDropContent = () => {
+            const canvas = dropCell.querySelector('canvas');
+            if (canvas) {
+                const newCanvas = canvas.cloneNode(true);
+                const newCtx = newCanvas.getContext('2d');
+                newCtx.drawImage(canvas, 0, 0);
+                return newCanvas;
+            }
+            return null;
+        };
+
+        // Save content
+        const draggedCanvas = cloneDraggedContent();
+        const draggedNoteId = this.draggedCell.dataset.noteId;
+        const dropCanvas = cloneDropContent();
+        const dropNoteId = dropCell.dataset.noteId;
+
+        // Clear both cells
+        dropCell.innerHTML = '';
+        this.draggedCell.innerHTML = '';
+
+        // Move dragged content to drop cell
+        if (draggedCanvas) {
+            dropCell.appendChild(draggedCanvas);
+        }
+        dropCell.dataset.noteId = draggedNoteId;
+        dropCell.draggable = true;
+
+        // If drop cell had content, move it to dragged cell
+        if (dropNoteId && dropCanvas) {
+            this.draggedCell.appendChild(dropCanvas);
+            this.draggedCell.dataset.noteId = dropNoteId;
+            this.draggedCell.draggable = true;
+        } else {
+            // Empty the dragged cell
+            this.draggedCell.dataset.noteId = '';
+            this.draggedCell.draggable = false;
+        }
+
+        // Reset styles
+        dropCell.style.backgroundColor = '';
+    }
+
+    handlePixelDragEnd(e) {
+        const cell = e.target.closest('.pixel-cell');
+        if (cell) {
+            cell.style.opacity = '';
+        }
+        this.draggedCell = null;
+
+        // Reset all cell styles
+        const cells = this.elements.pixelBox.querySelectorAll('.pixel-cell');
+        cells.forEach(c => {
+            c.style.backgroundColor = '';
+        });
     }
 
     showPixelNote(cell) {
