@@ -518,6 +518,11 @@ class CozyJournal {
         this.elements.stickyNote.classList.remove('visible', 'display-mode');
         this.currentMood = 'neutral';
 
+        // Reset transform and opacity for next use
+        this.elements.stickyNote.style.transition = '';
+        this.elements.stickyNote.style.transform = '';
+        this.elements.stickyNote.style.opacity = '';
+
         // Re-enable lamp hotspot when sticky note is closed
         this.elements.lampHotspot.classList.remove('disabled');
     }
