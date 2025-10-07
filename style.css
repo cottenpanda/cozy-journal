@@ -597,7 +597,7 @@ body.dark-mode .star-decoration {
 .quote-tooltip {
     position: fixed;
     bottom: 390px;
-    left: 410px;
+    left: 420px;
     background: #080808;
     padding: 8px 12px;
     border-radius: 8px;
