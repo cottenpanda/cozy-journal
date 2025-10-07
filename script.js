@@ -538,7 +538,7 @@ class CozyJournal {
         flyingEmoji.style.position = 'fixed';
         flyingEmoji.style.zIndex = '10000';
         flyingEmoji.style.pointerEvents = 'none';
-        flyingEmoji.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        flyingEmoji.style.transition = 'all 0.8s ease-out';
 
         // Create mini preview of the emoji
         const previewCanvas = document.createElement('canvas');
@@ -575,15 +575,15 @@ class CozyJournal {
         setTimeout(() => {
             flyingEmoji.style.left = targetRect.left + 'px';
             flyingEmoji.style.top = targetRect.top + 'px';
-            flyingEmoji.style.transform = 'scale(0.5) rotate(360deg)';
-            flyingEmoji.style.opacity = '1';
+            flyingEmoji.style.transform = 'scale(0.5)';
+            flyingEmoji.style.opacity = '0.8';
         }, 50);
 
         // Add to pixel box after animation
         setTimeout(() => {
             flyingEmoji.remove();
             this.addDrawingToPixelBox(drawingData, isCanvas, targetCell);
-        }, 650);
+        }, 850);
     }
 
     addDrawingToPixelBox(drawingData, isCanvas = true, targetCell = null) {
