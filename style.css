@@ -50,7 +50,7 @@ body.dark-mode .add-note-btn span {
 /* Lamp Hotspot */
 .lamp-hotspot {
     position: fixed;
-    left: 220px;
+    left: 240px;
     top: 70px;
     width: 150px;
     height: 150px;
@@ -145,7 +145,7 @@ body.dark-mode .add-note-btn span {
 .cat-decoration {
     position: fixed;
     bottom: 210px;
-    left: 400px;
+    left: 420px;
     width: 200px;
     height: auto;
     z-index: 2;
@@ -176,7 +176,7 @@ body.dark-mode .add-note-btn span {
 .plant-decoration {
     position: fixed;
     bottom: 180px;
-    left: 20px;
+    left: 30px;
     width: 140px;
     height: auto;
     z-index: 2;
